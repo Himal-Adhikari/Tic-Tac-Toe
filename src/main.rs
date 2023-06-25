@@ -1,4 +1,7 @@
-use std::io::{self, Write};
+use std::{
+    fmt::Display,
+    io::{self, Write},
+};
 
 #[derive(Clone, Copy, PartialEq)]
 enum State {
@@ -17,12 +20,12 @@ impl State {
     }
 }
 
-impl Into<&str> for State {
-    fn into(self) -> &'static str {
+impl Display for State {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            State::Player1 => "Player1",
-            State::Player2 => "Player2",
-            State::Empty => "",
+            State::Player1 => write!(f, "Player1"),
+            State::Player2 => write!(f, "Player2"),
+            State::Empty => write!(f, ""),
         }
     }
 }
@@ -70,15 +73,18 @@ fn main() {
 
         let previous_player = turn.toggle();
         if won(previous_player, &state) {
-            println!(
-                "CONGRULATIONS!!! {} wins",
-                Into::<&str>::into(previous_player)
-            );
-            std::process::exit(0);
+            state = [State::Empty; 9];
+            letters = [' '; 9];
+            print_first = format!("CONGRATULATIONS!!! {} wins", previous_player.to_string());
+            turn = State::Player1;
+            continue;
         }
         if game_finished(&state) {
-            println!("It's a draw!!!");
-            std::process::exit(0);
+            state = [State::Empty; 9];
+            letters = [' '; 9];
+            turn = State::Player1;
+            print_first.push_str("It's a draw");
+            continue;
         }
 
         let mut input = String::new();
@@ -135,7 +141,7 @@ fn game_finished(state: &[State; 9]) -> bool {
     for player in state.iter() {
         match player {
             State::Empty => return false,
-            State::Player1 | State::Player2 => continue,
+            _ => continue,
         }
     }
     true
