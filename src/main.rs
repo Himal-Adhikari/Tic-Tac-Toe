@@ -75,7 +75,7 @@ fn main() {
         if won(previous_player, &state) {
             state = [State::Empty; 9];
             letters = [' '; 9];
-            print_first = format!("CONGRATULATIONS!!! {} wins", previous_player.to_string());
+            print_first = format!("CONGRATULATIONS!!! {} wins", previous_player);
             turn = State::Player1;
             continue;
         }
@@ -98,7 +98,7 @@ fn main() {
                 continue;
             }
         };
-        if !(input <= 9 && input >= 1) {
+        if !((1..=9).contains(&input)) {
             print_first.push_str("Please enter a number between 1 and 9");
             continue;
         }
